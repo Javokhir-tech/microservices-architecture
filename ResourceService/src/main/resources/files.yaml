@@ -1,0 +1,70 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Resource Service
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080/
+
+paths:
+  /resources:
+    post:
+      summary: uploads new resource (song)
+      operationId: createResource
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "schemas/files.json"
+
+  /resources/{resourceId}:
+    get:
+      summary: gets a resource (song) by id
+      operationId: getResourceById
+      parameters:
+        - name: resourceId
+          in: path
+          required: true
+          description: The id of the resource to retrieve
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "schemas/files.json"
+
+  /resources/{resourceIds}:
+    delete:
+      summary: deletes a list of resources by ids
+      operationId: deleteResourcesByIds
+      parameters:
+        - name: resourceIds
+          in: path
+          required: true
+          description: The ids of the resources to delete
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK

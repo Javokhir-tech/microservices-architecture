@@ -8,8 +8,8 @@
       "description": "A unique id of a file",
       "type": "integer"
     },
-    "url" : {
-      "description": "url location of file",
+    "name" : {
+      "description": "name of file",
       "type": "string"
     }
   }

@@ -6,7 +6,7 @@ config:
   aws:
     region: us-east-1
     s3:
-      url: http://127.0.0.1:4572
+      url: http://127.0.0.1:4566
       bucket-name: resource
       access-key: localstack
       secret-key: localstack

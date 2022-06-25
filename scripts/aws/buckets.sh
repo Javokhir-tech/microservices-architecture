@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
-set -x
-awslocal s3 mb s3://resource
-set +x
+
+echo $(awslocal s3 mb s3://resource)
+
+echo $(awslocal s3 ls)

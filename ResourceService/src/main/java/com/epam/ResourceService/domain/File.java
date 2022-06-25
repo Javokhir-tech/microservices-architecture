@@ -15,5 +15,5 @@ public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String url;
+    private String name;
 }

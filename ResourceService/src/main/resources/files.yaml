@@ -30,7 +30,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "schemas/files.json"
+                $ref: "schemas/fileDto.json"
+
+    delete:
+      summary: deletes a list of resources by ids
+      operationId: deleteResourcesByIds
+      parameters:
+        - in: query
+          name: ids
+          required: true
+          description: The ids of the resources to delete
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseIds'
 
   /resources/{resourceId}:
     get:
@@ -50,21 +71,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "schemas/files.json"
+                type: string
+                format: byte
+        '400':
+          description: BAD REQUEST
+        '404':
+          description: NOT FOUND
 
-  /resources/{resourceIds}:
-    delete:
-      summary: deletes a list of resources by ids
-      operationId: deleteResourcesByIds
-      parameters:
-        - name: resourceIds
-          in: path
-          required: true
-          description: The ids of the resources to delete
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
+components:
+  schemas:
+    ResponseIds:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer

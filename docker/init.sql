@@ -2,9 +2,9 @@ CREATE DATABASE song;
 CREATE DATABASE resource;
 
 \c resource;
-CREATE TABLE IF NOT EXISTS files (
+CREATE TABLE IF NOT EXISTS file (
     id serial PRIMARY KEY,
-    url VARCHAR(255)
+    name VARCHAR(255)
 );
 
 \c song;

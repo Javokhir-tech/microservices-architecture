@@ -1,7 +1,7 @@
 version: '3'
 
 volumes:
-  db-data: {}
+  db: {}
 
 services:
 
@@ -16,12 +16,13 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db:/var/lib/postgresql/data
 
 
   localstack:
     image: localstack/localstack
     ports:
-      - "4572:4572"
+      - "4566-4583:4566-4583"
     environment:
       - DEBUG=1
       - LOCALSTACK_HOSTNAME=localhost
@@ -36,4 +37,4 @@ services:
     volumes:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - ../aws/scripts:/docker-entrypoint-initaws.d
+      - ../scripts/aws/buckets.sh:/docker-entrypoint-initaws.d/buckets.sh

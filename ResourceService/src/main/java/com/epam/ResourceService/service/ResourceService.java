@@ -2,6 +2,7 @@ package com.epam.ResourceService.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.epam.ResourceService.Constants;
 import com.epam.ResourceService.api.ResourcesApiDelegate;
 import com.epam.ResourceService.domain.File;
 import com.epam.ResourceService.model.FileDto;
@@ -11,6 +12,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,9 @@ import java.util.List;
 public class ResourceService implements ResourcesApiDelegate {
 
     private static final String FILE_EXTENSION = "fileExtension";
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     private final AmazonS3 amazonS3;
     private final String bucketName;
@@ -49,6 +55,7 @@ public class ResourceService implements ResourcesApiDelegate {
                 .id(mp3File.getId())
                 .name(mp3File.getName());
 
+        rabbitTemplate.convertAndSend(Constants.EXCHANGE, Constants.ROUTING_KEY, fileDto);
         return ResponseEntity.ok(fileDto);
     }
 
@@ -68,6 +75,7 @@ public class ResourceService implements ResourcesApiDelegate {
         var file = fileRepository.findById(resourceId).orElseThrow(EntityNotFoundException::new);
         log.info("file {}", file);
         var content = amazonS3.getObject(bucketName, file.getName()).getObjectContent();
+//        com.amazonaws.util.IOUtils.
         return ResponseEntity.ok(IOUtils.toByteArray(content));
     }
 

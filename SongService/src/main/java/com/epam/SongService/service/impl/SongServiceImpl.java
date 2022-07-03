@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public void deleteSongMetadata(long id) {
-        repository.deleteById(id);
+    public void deleteSongMetadata(List<Long> ids) {
+        repository.deleteAllById(ids);
     }
 }

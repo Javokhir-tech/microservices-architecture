@@ -2,10 +2,7 @@ package com.epam.SongService.domain;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -17,7 +14,10 @@ public class Metadata {
     private String name;
     private String artist;
     private String album;
+    @Column(name = "leng")
     private String length;
+    @Column(name = "resourceid")
     private String resourceId;
+    @Column(name = "yr")
     private Integer year;
 }

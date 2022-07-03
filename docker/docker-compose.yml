@@ -3,6 +3,10 @@ version: '3'
 volumes:
   db: {}
 
+networks:
+  song-net:
+    driver: local
+
 services:
 
   db:
@@ -38,3 +42,15 @@ services:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - ../scripts/aws/buckets.sh:/docker-entrypoint-initaws.d/buckets.sh
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+#    networks:
+#      - song-net

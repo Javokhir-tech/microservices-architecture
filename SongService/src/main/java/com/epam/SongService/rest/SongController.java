@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/songs")
@@ -23,9 +25,9 @@ public class SongController {
         return ResponseEntity.ok(songService.getSongMetadata(id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMetadatas(@PathVariable("id") long id) {
-        songService.deleteSongMetadata(id);;
+    @DeleteMapping
+    public ResponseEntity<Void> deleteMetadatas(@RequestParam(value = "ids", required = true) List<Long> ids) {
+        songService.deleteSongMetadata(ids);
         return ResponseEntity.noContent().build();
     }
 

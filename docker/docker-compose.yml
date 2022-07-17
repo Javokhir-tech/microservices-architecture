@@ -96,13 +96,7 @@ services:
       - SPRING_RABBITMQ_PORT=5672
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest
-    depends_on:
-      - localstack
-# localstack unknown host
-  # localhost` con ref
-  # host.docker.internal cert
-  # http://s3.localhost.localstack.cloud:4566 connection refused
-  # http://resource.s3.localhost.localstack.cloud:4566 conn ref
+
   resource-processor:
     container_name: resource-processor
     build:
@@ -115,3 +109,7 @@ services:
     environment:
       - RESOURCE_URL=http://resource-service:8080
       - SONG_URL=http://song-service:8081
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest

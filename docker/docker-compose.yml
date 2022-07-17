@@ -5,7 +5,7 @@ volumes:
 
 networks:
   song-net:
-    driver: local
+    driver: bridge
 
 services:
 
@@ -21,9 +21,11 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - db:/var/lib/postgresql/data
-
+    networks:
+      - song-net
 
   localstack:
+    hostname: localstack
     image: localstack/localstack
     ports:
       - "4566-4583:4566-4583"
@@ -35,6 +37,7 @@ services:
       - SERVICES=s3
       - DOCKER_HOST=unix:///var/run/docker.sock
       - HOSTNAME=localstack
+      - HOSTNAME_EXTERNAL=localstack
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=localstack
       - AWS_SECRET_ACCESS_KEY=localstack
@@ -42,15 +45,73 @@ services:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - ../scripts/aws/buckets.sh:/docker-entrypoint-initaws.d/buckets.sh
+    networks:
+      - song-net
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: 'rabbitmq'
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
-#    networks:
-#      - song-net
+    networks:
+      - song-net
+
+  song-service:
+    container_name: song-service
+    build:
+      context: ../SongService
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - song-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/song
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+
+  resource-service:
+    container_name: resource-service
+    build:
+      context: ../ResourceService
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - song-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/resource
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - CONFIG_AWS_S3_URL=http://localstack:4566/resource
+      - CONFIG_AWS_S3_BUCKET_NAME=resource
+      - CONFIG_AWS_S3_ACCESS_KEY=localstack
+      - CONFIG_AWS_S3_SECRET_KEY=localstack
+      - CONFIG_AWS_REGION=us-east-1
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+    depends_on:
+      - localstack
+# localstack unknown host
+  # localhost` con ref
+  # host.docker.internal cert
+  # http://s3.localhost.localstack.cloud:4566 connection refused
+  # http://resource.s3.localhost.localstack.cloud:4566 conn ref
+  resource-processor:
+    container_name: resource-processor
+    build:
+      context: ../ResourceProcessor
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - song-net
+    environment:
+      - RESOURCE_URL=http://resource-service:8080
+      - SONG_URL=http://song-service:8081

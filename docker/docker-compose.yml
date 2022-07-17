@@ -15,8 +15,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_DB: postgres
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -70,9 +70,9 @@ services:
     networks:
       - song-net
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/song
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL_SONG
+      - SPRING_DATASOURCE_USERNAME=$DB_USERNAME
+      - SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
 
   resource-service:
     container_name: resource-service
@@ -84,18 +84,18 @@ services:
     networks:
       - song-net
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/resource
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - CONFIG_AWS_S3_URL=http://localstack:4566/resource
-      - CONFIG_AWS_S3_BUCKET_NAME=resource
-      - CONFIG_AWS_S3_ACCESS_KEY=localstack
-      - CONFIG_AWS_S3_SECRET_KEY=localstack
-      - CONFIG_AWS_REGION=us-east-1
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=guest
-      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL_RESOURCE
+      - SPRING_DATASOURCE_USERNAME=$DB_USERNAME
+      - SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+      - CONFIG_AWS_S3_URL=$CONFIG_AWS_S3_URL
+      - CONFIG_AWS_S3_BUCKET_NAME=$CONFIG_AWS_S3_BUCKET_NAME
+      - CONFIG_AWS_S3_ACCESS_KEY=$CONFIG_AWS_S3_ACCESS_KEY
+      - CONFIG_AWS_S3_SECRET_KEY=$CONFIG_AWS_S3_SECRET_KEY
+      - CONFIG_AWS_REGION=$CONFIG_AWS_REGION
+      - SPRING_RABBITMQ_HOST=$SPRING_RABBITMQ_HOST
+      - SPRING_RABBITMQ_PORT=$SPRING_RABBITMQ_PORT
+      - SPRING_RABBITMQ_USERNAME=$SPRING_RABBITMQ_USERNAME
+      - SPRING_RABBITMQ_PASSWORD=$SPRING_RABBITMQ_PASSWORD
 
   resource-processor:
     container_name: resource-processor
@@ -107,9 +107,9 @@ services:
     networks:
       - song-net
     environment:
-      - RESOURCE_URL=http://resource-service:8080
-      - SONG_URL=http://song-service:8081
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=guest
-      - SPRING_RABBITMQ_PASSWORD=guest
+      - RESOURCE_URL=$RESOURCE_URL
+      - SONG_URL=$SONG_URL
+      - SPRING_RABBITMQ_HOST=$SPRING_RABBITMQ_HOST
+      - SPRING_RABBITMQ_PORT=$SPRING_RABBITMQ_PORT
+      - SPRING_RABBITMQ_USERNAME=$SPRING_RABBITMQ_USERNAME
+      - SPRING_RABBITMQ_PASSWORD=$SPRING_RABBITMQ_PASSWORD

@@ -1,8 +1,7 @@
 package com.epam.ResourceProcessor.service.imol;
 
 import com.epam.ResourceProcessor.Constants;
-import com.epam.ResourceProcessor.feign.ResourceClient;
-import com.epam.ResourceProcessor.feign.SongClient;
+import com.epam.ResourceProcessor.feign.GatewayClient;
 import com.epam.ResourceProcessor.model.FileDto;
 import com.epam.ResourceProcessor.model.SongDTO;
 import com.epam.ResourceProcessor.service.ParserService;
@@ -28,8 +27,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ParserServiceImpl implements ParserService {
 
-    private final ResourceClient resourceClient;
-    private final SongClient songClient;
+    private final GatewayClient gatewayClient;
 
     @Bean
     public MessageConverter converter() {
@@ -41,7 +39,7 @@ public class ParserServiceImpl implements ParserService {
     @RabbitListener(queues = Constants.QUEUE)
     public void parseMP3ToMetadata(FileDto fileDto) {
         System.out.println("Message Received from queue: " + fileDto);
-        var resourceFile =  resourceClient.getResourceById(fileDto.getId());
+        var resourceFile =  gatewayClient.getResourceById(fileDto.getId());
 
         writeByte(resourceFile.getBody());
 
@@ -52,7 +50,7 @@ public class ParserServiceImpl implements ParserService {
         songDto.setResourceId(fileDto.getId());
         log.info("song {}", songDto);
 
-        var payloadResp = songClient.createMetadata(songDto);
+        var payloadResp = gatewayClient.createMetadata(songDto);
         log.info("payloadResp {}", payloadResp);
 //        return songDto;
     }

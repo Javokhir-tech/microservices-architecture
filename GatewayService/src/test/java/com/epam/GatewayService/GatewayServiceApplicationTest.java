@@ -1,11 +1,11 @@
-package com.epam.DiscoveryService;
+package com.epam.GatewayService;
 
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for simple App.
  */
-public class DiscoveryServiceApplicationTest
+public class GatewayServiceApplicationTest
 {
     /**
      * Rigorous Test :-)

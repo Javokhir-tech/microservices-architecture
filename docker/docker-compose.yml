@@ -73,6 +73,7 @@ services:
       - SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL_SONG
       - SPRING_DATASOURCE_USERNAME=$DB_USERNAME
       - SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+      - SERVICE_URL_DEFAULT_ZONE=$EUREKA_CLIENT_SERVICE_URL
 
   resource-service:
     container_name: resource-service
@@ -80,7 +81,7 @@ services:
       context: ../ResourceService
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8090:8090"
     networks:
       - song-net
     environment:
@@ -96,6 +97,7 @@ services:
       - SPRING_RABBITMQ_PORT=$SPRING_RABBITMQ_PORT
       - SPRING_RABBITMQ_USERNAME=$SPRING_RABBITMQ_USERNAME
       - SPRING_RABBITMQ_PASSWORD=$SPRING_RABBITMQ_PASSWORD
+      - SERVICE_URL_DEFAULT_ZONE=$EUREKA_CLIENT_SERVICE_URL
 
   resource-processor:
     container_name: resource-processor
@@ -107,9 +109,30 @@ services:
     networks:
       - song-net
     environment:
-      - RESOURCE_URL=$RESOURCE_URL
-      - SONG_URL=$SONG_URL
+      - SERVICE_URL_DEFAULT_ZONE=$EUREKA_CLIENT_SERVICE_URL
       - SPRING_RABBITMQ_HOST=$SPRING_RABBITMQ_HOST
       - SPRING_RABBITMQ_PORT=$SPRING_RABBITMQ_PORT
       - SPRING_RABBITMQ_USERNAME=$SPRING_RABBITMQ_USERNAME
       - SPRING_RABBITMQ_PASSWORD=$SPRING_RABBITMQ_PASSWORD
+
+  gateway-service:
+    container_name: gateway-service
+    build:
+      context: ../GatewayService
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    networks:
+      - song-net
+    environment:
+      - SERVICE_URL_DEFAULT_ZONE=$EUREKA_CLIENT_SERVICE_URL
+
+  discovery-service:
+    container_name: discovery-service
+    build:
+      context: ../DiscoveryService
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - song-net

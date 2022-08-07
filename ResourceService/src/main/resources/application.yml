@@ -30,7 +30,14 @@ spring:
     username: guest
     password: guest
 
+  liquibase:
+    change-log: classpath:migrations/changelog-master.xml
+
 server.port: 8090
+
+storage:
+  application:
+    name: storage-service
 
 eureka:
   client:

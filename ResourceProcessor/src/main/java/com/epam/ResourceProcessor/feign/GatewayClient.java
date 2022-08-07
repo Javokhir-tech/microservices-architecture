@@ -16,4 +16,6 @@ public interface GatewayClient {
 
     @PostMapping("/songs")
     ResponseEntity<SongDTO> createMetadata(@RequestBody SongDTO metadata);
+
+
 }

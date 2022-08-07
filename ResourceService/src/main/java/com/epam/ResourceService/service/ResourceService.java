@@ -28,29 +28,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResourceService implements ResourcesApiDelegate {
 
-    private static final String FILE_EXTENSION = "fileExtension";
-
-    private final RabbitTemplate rabbitTemplate;
     private final AmazonS3 amazonS3;
     private final FileRepository fileRepository;
+    private final RabbitTemplate rabbitTemplate;
     private final StorageServiceClient storageServiceClient;
+    private static final String FILE_EXTENSION = "fileExtension";
 
     @SneakyThrows
     @Override
     public ResponseEntity<FileDto> createResource(MultipartFile file) {
 
-//        var storageDto = storageServiceClient.getRandomStagingStorage();
+        var storageDto = storageServiceClient.getRandomStagingStorage();
 
         var mp3File = new File();
         mp3File.setName(file.getOriginalFilename());
-//        mp3File.setStorageId(storageDto.getId());
+        mp3File.setStorageId(storageDto.getId());
 
 
-//        var putObjectResult = amazonS3.putObject(new PutObjectRequest(storageDto.getBucket(), mp3File.getName(),
-//                file.getInputStream(), extractObjectMetadata(file))
-//        ).getETag();
+        var putObjectResult = amazonS3.putObject(new PutObjectRequest(storageDto.getBucket(), mp3File.getName(),
+                file.getInputStream(), extractObjectMetadata(file))
+        ).getETag();
 
-//        mp3File.setStorageKey(putObjectResult);
+        mp3File.setStorageKey(putObjectResult);
         fileRepository.save(mp3File);
         var fileDto = new FileDto() // mapper
                 .id(mp3File.getId())
@@ -77,24 +76,26 @@ public class ResourceService implements ResourcesApiDelegate {
     public ResponseEntity<byte[]> getResourceById(Integer resourceId) {
         var file = fileRepository.findById(resourceId).orElseThrow(EntityNotFoundException::new);
         log.info("file {}", file);
-        var storageDto = storageServiceClient.getStorageById(file.getId());
+        var storageDto = storageServiceClient.getStorageById(file.getStorageId());
+        log.info("storageDto {}", storageDto);
         var content = amazonS3.getObject(storageDto.getBucket(), file.getName()).getObjectContent();
 //        com.amazonaws.util.IOUtils.
         return ResponseEntity.ok(IOUtils.toByteArray(content));
     }
 
-//    @Override
-//    @SneakyThrows
-//    public ResponseEntity<FileDto> updateResourceById(Integer resourceId, FileDto fileDto) {
-//        var file = fileRepository.findById(resourceId).orElseThrow(EntityNotFoundException::new);
-//
-////        var storageDto = storageServiceClient.getStorageById(file.getStorageId());
-//        file.setStorageId(file.getStorageId());
-//        file.setName(fileDto.getName());
-//
-//        fileRepository.save(file);
-//        return ResponseEntity.ok(fileDto);
-//    }
+    @Override
+    @SneakyThrows
+    public ResponseEntity<FileDto> updateResourceById(Integer resourceId, FileDto fileDto) {
+        var file = fileRepository.findById(resourceId).orElseThrow(EntityNotFoundException::new);
+
+//        var storageDto = storageServiceClient.getStorageById(file.getStorageId());
+        file.setStorageId(file.getStorageId());
+        file.setName(fileDto.getName());
+
+        fileRepository.save(file);
+        return ResponseEntity.ok(fileDto);
+    }
+
 
     private ObjectMetadata extractObjectMetadata(MultipartFile file) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -102,5 +103,11 @@ public class ResourceService implements ResourcesApiDelegate {
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.getUserMetadata().put(FILE_EXTENSION, FilenameUtils.getExtension(file.getOriginalFilename()));
         return objectMetadata;
+    }
+
+    private void initializeBucket(String bucketName) {
+        if (!amazonS3.doesBucketExistV2(bucketName)) {
+            amazonS3.createBucket(bucketName);
+        }
     }
 }

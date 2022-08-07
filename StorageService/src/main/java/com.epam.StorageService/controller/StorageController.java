@@ -21,6 +21,10 @@ public class StorageController {
         return ResponseEntity.ok(storageService.getAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<StorageEntity> getById(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(storageService.getById(id));
+    }
     @PostMapping
     public ResponseEntity<Integer> create(@RequestBody StorageEntity storageEntity) {
         return ResponseEntity.status(HttpStatus.CREATED).body(storageService.create(storageEntity));

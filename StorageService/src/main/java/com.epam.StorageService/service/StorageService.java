@@ -11,4 +11,6 @@ public interface StorageService {
     List<StorageEntity> getAll();
 
     void deleteByIds(List<Integer> ids);
+
+    StorageEntity getById(Integer id);
 }

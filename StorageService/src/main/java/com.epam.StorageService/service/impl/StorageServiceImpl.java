@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -31,5 +32,10 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void deleteByIds(List<Integer> ids) {
         storageRepository.deleteAllById(ids);
+    }
+
+    @Override
+    public StorageEntity getById(Integer id) {
+        return storageRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 }

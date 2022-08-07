@@ -26,6 +26,7 @@ public class StorageServiceClient {
 
     public StorageDTO getRandomStagingStorage() {
         StorageDTO[] storages = getStorages();
+        log.info("storages {}", storages);
         List<StorageDTO> storageList = new ArrayList<>();
 
         for (StorageDTO storage : storages) {
@@ -41,7 +42,7 @@ public class StorageServiceClient {
     @CircuitBreaker(name = "cb-instanceA", fallbackMethod = "localCacheGetStorageById")
     public StorageDTO getStorageById(Integer id) {
         final String URL_STORAGE_BY_ID = "http://" + storageAppName + "/storages/" + id;
-
+        log.info("URL_STORAGE_BY_ID {}", URL_STORAGE_BY_ID);
         return restTemplate.getForObject(URL_STORAGE_BY_ID, StorageDTO.class);
     }
 
@@ -51,7 +52,7 @@ public class StorageServiceClient {
 
 
     private StorageDTO[] getStorages() {
-        final String URL_STORAGES = "http://" + storageAppName + "/storages/";
+        final String URL_STORAGES = "http://" + storageAppName + "/storages";
         log.info("URL_STORAGES: " + URL_STORAGES);
         return restTemplate.getForObject(URL_STORAGES, StorageDTO[].class);
     }
@@ -61,7 +62,7 @@ public class StorageServiceClient {
         return StorageDTO.builder()
                 .id(2)
                 .storageType(PERMANENT)
-                .bucket("permanent-temp")
+                .bucket("resource")
                 .build();
     }
 

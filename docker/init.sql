@@ -1,5 +1,6 @@
 CREATE DATABASE song;
 CREATE DATABASE resource;
+CREATE DATABASE storage;
 
 \c resource;
 CREATE TABLE IF NOT EXISTS file (

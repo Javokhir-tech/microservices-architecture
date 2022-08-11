@@ -4,6 +4,8 @@ import com.epam.ResourceProcessor.Constants;
 import com.epam.ResourceProcessor.feign.GatewayClient;
 import com.epam.ResourceProcessor.model.FileDto;
 import com.epam.ResourceProcessor.model.SongDTO;
+import com.epam.ResourceProcessor.model.StorageDTO;
+import com.epam.ResourceProcessor.restclient.StorageServiceClient;
 import com.epam.ResourceProcessor.service.ParserService;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.Mp3File;
@@ -13,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -28,6 +32,17 @@ import java.util.Objects;
 public class ParserServiceImpl implements ParserService {
 
     private final GatewayClient gatewayClient;
+    private final RestTemplate restTemplate;
+    private final StorageServiceClient storageServiceClient;
+
+    // Getting the file via creating File class object
+    static String FILEPATH = "file";
+    static File file = new File(FILEPATH);
+
+
+    @Value("${resource.application.name}")
+    private final String resourceAppName;
+
 
     @Bean
     public MessageConverter converter() {
@@ -51,14 +66,22 @@ public class ParserServiceImpl implements ParserService {
         log.info("song {}", songDto);
 
         var payloadResp = gatewayClient.createMetadata(songDto);
+        if (payloadResp.getStatusCode().is2xxSuccessful())
+            updateResource(fileDto);
         log.info("payloadResp {}", payloadResp);
 //        return songDto;
     }
 
-    static String FILEPATH = "file";
+    public void updateResource(FileDto fileDto) {
+        var storage = storageServiceClient.getRandomStagingStorage();
+        fileDto.setId(storage.getId());
+        final String URL_RESOURCE_UPDATE_BY_ID = "http://" + resourceAppName + "/resources/" + fileDto.getId();
+        log.info("updateResource starting...");
+        restTemplate.put(URL_RESOURCE_UPDATE_BY_ID, fileDto);
+        log.info("updateResource end.");
+    }
 
-    // Getting the file via creating File class object
-    static File file = new File(FILEPATH);
+
 
     static void writeByte(byte[] bytes) {
 

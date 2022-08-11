@@ -77,6 +77,29 @@ paths:
           description: BAD REQUEST
         '404':
           description: NOT FOUND
+    put:
+      summary: updates a resource by id
+      operationId: updateResourceById
+      parameters:
+        - name: resourceId
+          in: path
+          required: true
+          description: id of the resource to update
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "schemas/fileDto.json"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "schemas/fileDto.json"
 
 components:
   schemas:

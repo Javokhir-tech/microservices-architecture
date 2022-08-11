@@ -11,6 +11,10 @@
     "name" : {
       "description": "name of file",
       "type": "string"
+    },
+    "storageId" : {
+      "description": "storage id",
+      "type": "integer"
     }
   }
 }

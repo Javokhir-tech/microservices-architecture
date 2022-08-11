@@ -30,9 +30,49 @@ spring:
     username: guest
     password: guest
 
+  liquibase:
+    change-log: classpath:migrations/changelog-master.xml
+
 server.port: 8090
+
+storage:
+  application:
+    name: storage-service:8085
 
 eureka:
   client:
     serviceUrl:
       defaultZone: ${SERVICE_URL_DEFAULT_ZONE:http://localhost:8761/eureka}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      cb-instanceA:
+        failure-rate-threshold: 60  #The Threshold Percentage Above Which the Circuit Breaker will move from Closed to Open State.
+        wait-duration-in-open-state: 5000  #Time in milliseconds, in which the circuit breaker is to stay in open state before moving to half-open state
+        permitted-number-of-calls-in-half-open-state: 10
+        minimum-number-of-calls: 10  #The number of calls after which the error rate is calculated. I have assigned it with a small value for test purpose.
+  ratelimiter:
+    instances:
+      rl-instanceA:
+        limit-refresh-period: 200ns
+        limit-for-period: 40 #The Max number of calls that can be done in the time specified by limit-refresh-period
+        timeout-duration: 3s # The max amount of time a call can last
+  thread-pool-bulkhead:
+    instances:
+      tp-instanceA:
+        queue-capacity: 2 #The number of calls which can be queued if the thread pool is saturated
+        core-thread-pool-size: 4 #The Number of available threads in the Thread Pool.
+  timelimiter:
+    instances:
+      tl-instanceA:
+        timeout-duration: 2s # The max amount of time a call can last
+        cancel-running-future: false #do not cancel the Running Completable Futures After TimeOut.
+  retry:
+    instances:
+      re-instanceA:
+        max-attempts: 3
+        wait-duration: 1s # After this time, the call will be considered a failure and will be retried
+        retry-exceptions: #The List Of Exceptions That Will Trigger a Retry
+          - java.lang.RuntimeException
+          - java.io.IOException

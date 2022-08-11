@@ -7,4 +7,5 @@ public class FileDto {
 
     private Integer id;
     private String name;
+    private Integer storageId;
 }

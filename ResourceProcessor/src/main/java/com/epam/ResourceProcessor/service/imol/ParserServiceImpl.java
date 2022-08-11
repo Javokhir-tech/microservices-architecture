@@ -33,15 +33,15 @@ public class ParserServiceImpl implements ParserService {
 
     private final GatewayClient gatewayClient;
     private final RestTemplate restTemplate;
-    private StorageServiceClient storageServiceClient;
-
-    static String FILEPATH = "file";
+    private final StorageServiceClient storageServiceClient;
 
     // Getting the file via creating File class object
+    static String FILEPATH = "file";
     static File file = new File(FILEPATH);
 
+
     @Value("${resource.application.name}")
-    private String resourceAppName;
+    private final String resourceAppName;
 
 
     @Bean

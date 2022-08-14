@@ -121,7 +121,7 @@ services:
       context: ../GatewayService
       dockerfile: Dockerfile
     ports:
-      - "9090:9090"
+      - "9000:9000"
     networks:
       - song-net
     environment:
@@ -134,5 +134,26 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8761:8761"
+    networks:
+      - song-net
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus_config/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - song-net
+
+  grafana:
+    container_name: 'grafana'
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=password
+      - GF_USERS_ALLOW_SIGN_UP=false
     networks:
       - song-net

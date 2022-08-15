@@ -41,7 +41,7 @@ public class ParserServiceImpl implements ParserService {
 
 
     @Value("${resource.application.name}")
-    private final String resourceAppName;
+    private String resourceAppName;
 
 
     @Bean

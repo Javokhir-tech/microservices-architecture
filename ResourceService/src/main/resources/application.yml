@@ -76,3 +76,13 @@ resilience4j:
         retry-exceptions: #The List Of Exceptions That Will Trigger a Retry
           - java.lang.RuntimeException
           - java.io.IOException
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
+          - health
+          - info
+          - metrics

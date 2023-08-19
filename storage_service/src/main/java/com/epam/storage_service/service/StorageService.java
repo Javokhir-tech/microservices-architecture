@@ -1,6 +1,6 @@
-package com.epam.StorageService.service;
+package com.epam.storage_service.service;
 
-import com.epam.StorageService.entity.StorageEntity;
+import com.epam.storage_service.entity.StorageEntity;
 
 import java.util.List;
 

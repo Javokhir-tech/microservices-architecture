@@ -1,4 +1,4 @@
-package com.epam.StorageService;
+package com.epam.storage_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

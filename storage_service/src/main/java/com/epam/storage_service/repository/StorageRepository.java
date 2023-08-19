@@ -1,6 +1,6 @@
-package com.epam.StorageService.repository;
+package com.epam.storage_service.repository;
 
-import com.epam.StorageService.entity.StorageEntity;
+import com.epam.storage_service.entity.StorageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

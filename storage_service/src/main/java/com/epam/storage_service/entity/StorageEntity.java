@@ -1,4 +1,4 @@
-package com.epam.StorageService.entity;
+package com.epam.storage_service.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

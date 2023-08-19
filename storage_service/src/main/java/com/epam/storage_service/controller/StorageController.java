@@ -1,7 +1,7 @@
-package com.epam.StorageService.controller;
+package com.epam.storage_service.controller;
 
-import com.epam.StorageService.entity.StorageEntity;
-import com.epam.StorageService.service.StorageService;
+import com.epam.storage_service.entity.StorageEntity;
+import com.epam.storage_service.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

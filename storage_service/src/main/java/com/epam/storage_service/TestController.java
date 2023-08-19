@@ -1,4 +1,4 @@
-package com.epam.StorageService;
+package com.epam.storage_service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

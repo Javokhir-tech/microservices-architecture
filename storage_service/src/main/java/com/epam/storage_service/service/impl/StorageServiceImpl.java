@@ -1,8 +1,8 @@
-package com.epam.StorageService.service.impl;
+package com.epam.storage_service.service.impl;
 
-import com.epam.StorageService.entity.StorageEntity;
-import com.epam.StorageService.repository.StorageRepository;
-import com.epam.StorageService.service.StorageService;
+import com.epam.storage_service.entity.StorageEntity;
+import com.epam.storage_service.repository.StorageRepository;
+import com.epam.storage_service.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.epam.StorageService.config;
+package com.epam.storage_service.config;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
